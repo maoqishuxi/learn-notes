@@ -2,4 +2,4 @@
 
 git add *
 git commit -a -m "add file"
-git push origin
+git push origin branch
