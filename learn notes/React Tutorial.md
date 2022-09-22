@@ -450,5 +450,339 @@ function Example() {
 }
 ```
 
-### 2. Hooks at a Glance
+### 2. Hooks at a Glance(钩子一览)
+
+Declaring multiple state variables
+
+You can use the State Hook more than once in a single component:
+
+```
+function ExampleWithManyStates() {
+  // Declare multiple state variables!
+  const [age, setAge] = useState(42);
+  const [fruit, setFruit] = useState('banana');
+  const [todos, setTodos] = useState([{ text: 'Learn Hooks' }]);
+  // ...
+}
+```
+
+Hooks are functions that let you "hook into" React state and lifecycle features from function components. Hooks don't work inside classes -- they let you use React without classes. (Hook 不能用于class类)
+
+**Effect Hook**
+
+You've likely performed data fetching, subscriptions, or manually changing the DOM from React components before. We call these operations "side effects" (or "effects" for short) because they can affect other components and can't be done during rendering. (像获取数据，子脚本或从React组件改变DOM等，这类无法在渲染期间完成的操作)
+
+The Effect Hook, `useEffect` , adds the ability to perform side effects from a function component. (增加函数组件执行副作用的能力)
+
+For example, this component sets the document title after React updates the DOM:
+
+```
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  // Similar to componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    // Update the document title using the browser API
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+When you call `useEffect` , you're telling React to run your "effect" function after flushing changes to the DOM. Effects are declared inside the component so they have access to its props and state. By default, React runs the effects after every render -- including the first render.
+
+```
+function FriendStatusWithCounter(props) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+
+  const [isOnline, setIsOnline] = useState(null);
+  useEffect(() => {
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+  // ...
+```
+
+**Rules of Hooks**
+
+Hooks are JavaScript functions, but they impose two additional rules:
+
+- Only call Hooks **at the level** . Don't call Hooks inside loops, conditions, or nested functions.
+- Only call Hooks **from React function components** . Don't call Hooks from regular JavaScript functions. (There is just one other valid place to call Hooks -- your own custom Hooks. We'll learn about them in a moment.)
+
+**Building Your Own Hooks**
+
+Earlier on this page, we introduced a `FriendStatus` component that calls the `useState` and `useEffect` Hooks to subscribe to a friend's online status. Let's say we also want to reuse this subscription logic in another component.
+
+First, we'll extract this logic into a custom Hook called `useFriendStatus` :
+
+```
+import React, { useState, useEffect } from 'react';
+
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+
+  useEffect(() => {
+    ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+    };
+  });
+
+  return isOnline;
+}
+```
+
+Now we can use it from both components:
+
+```
+function FriendStatus(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+
+  if (isOnline === null) {
+    return 'Loading...';
+  }
+  return isOnline ? 'Online' : 'Offline';
+}
+```
+
+```
+function FriendListItem(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+
+  return (
+    <li style={{ color: isOnline ? 'green' : 'black' }}>
+      {props.friend.name}
+    </li>
+  );
+}
+```
+
+The state of each component is completely independent. Hooks are a way to reuse *stateful logic* , not state itself. In fact, each *call* to a Hook has a completely isolated state -- so you can even use the same custom Hook twice in one component.
+
+Custom Hooks are more of a convention than a feature. If a function's name starts with "`use`" and it calls other Hooks, we say it is a custom Hook. The `useSomething` naming convention is how our linter plugin is able to find bugs in the code using Hooks. (如果一个函数用use开头，我们就叫它自定义Hook函数)
+
+### 3. Using the State Hook
+
+**What does calling `useState` do?** It declares a "state variable". Our variable is called `count` but we could call it anything else, like `banana` . This is a way to "preserve" some values between the function calls -- `useState` is a new way to use the exact same capabilities that `this.state` provides in a class. Normally, variables "disappear" when the function exits but state variables are preserved by React.
+
+**What do we pass to `useState` as an argument?** The only argument to the `useState()` Hook is the initial state. Unlike with classes, the state doesn't have to be an object. We can keep a number or a string if that's all we need. In our example, we just want a number for how many times the user clicked, so pass `0` as initial state for our variable. (If we wanted to store two different values in state, we would call `useState()` twice.)
+
+**What does `useState` return?** It returns a pair of values: the current state and a function that updates it. This is why we write `const [count, setCount] = useState()` . This is similar to `this.state.count` and `this.setState` in a class, except you get them in a pair. If you're not familiar with the syntax we used, we'll come back to it [at the bottom of this page](https://reactjs.org/docs/hooks-state.html#tip-what-do-square-brackets-mean).
+
+```
+import React, { useState } from 'react';
+
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+```
+
+**Reading State**
+
+When we want to display the current count in a class, we read `this.state.count` :
+
+```
+  <p>You clicked {this.state.count} times</p>
+```
+
+In a function, we can use `count` directly:
+
+```
+  <p>You clicked {count} times</p>
+```
+
+**Updating State**
+
+In a class, we need to call `this.setState()` to update the `count` state:
+
+```
+  <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+    Click me
+  </button>
+```
+
+In a function, we already have `setCount` and `count` as variables so we don't need `this` :
+
+```
+  <button onClick={() => setCount(count + 1)}>
+    Click me
+  </button>
+```
+
+### 4. Using the Effect Hook
+
+Data fetching, setting up a subscription, and manually the DOM in React components are all examples of side effects. Whether or not you're used to calling these operations "side effects" (or just "effects"), you've likely performed them in your components before.
+
+**Effects with Cleanup**
+
+Earlier, we looked at how to express side effects that don't require any cleanup. However, some effects do. For example, **we might want to set up a subscription** to some external data source.
+
+```
+import React, { useState, useEffect } from 'react';
+
+function FriendStatus(props) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  useEffect(() => {
+    function handleStatusChange(status) {
+      setIsOnline(status.isOnline);
+    }
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    // Specify how to clean up after this effect:
+    return function cleanup() {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+
+  if (isOnline === null) {
+    return 'Loading...';
+  }
+  return isOnline ? 'Online' : 'Offline';
+}
+```
+
+### 5. Rules of Hooks
+
+**Only Call Hooks at the Top Level**
+
+**Don't call Hooks inside loops, conditions, or nested functions.** Instead, always use Hooks at the top level of your React function, before any early return. By following this rule, you ensure that Hooks are called in the same order each time a component renders.
+
+**Only Call Hooks from React Functions**
+
+**Don't call Hooks from regular JavaScript functions.** Instead, you can:
+
+- - [x] Call Hooks from React function components.
+- - [x] Call Hooks from custom Hooks (we'll learn about them on the next page.)
+
+**Explanation**
+
+As we learned earlier, we can use multiple State or Effect Hooks in a single component:
+
+```
+function Form() {
+  // 1. Use the name state variable
+  const [name, setName] = useState('Mary');
+
+  // 2. Use an effect for persisting the form
+  useEffect(function persistForm() {
+    localStorage.setItem('formData', name);
+  });
+
+  // 3. Use the surname state variable
+  const [surname, setSurname] = useState('Poppins');
+
+  // 4. Use an effect for updating the title
+  useEffect(function updateTitle() {
+    document.title = name + ' ' + surname;
+  });
+
+  // ...
+}
+```
+
+So how does React know which state corresponds to which `useState` call? The answer is that **React relies on the order in which Hooks are called.** Our example works because the order of the Hook calls is the same on every render:
+
+```
+// ------------
+// First render
+// ------------
+useState('Mary')           // 1. Initialize the name state variable with 'Mary'
+useEffect(persistForm)     // 2. Add an effect for persisting the form
+useState('Poppins')        // 3. Initialize the surname state variable with 'Poppins'
+useEffect(updateTitle)     // 4. Add an effect for updating the title
+
+// -------------
+// Second render
+// -------------
+useState('Mary')           // 1. Read the name state variable (argument is ignored)
+useEffect(persistForm)     // 2. Replace the effect for persisting the form
+useState('Poppins')        // 3. Read the surname state variable (argument is ignored)
+useEffect(updateTitle)     // 4. Replace the effect for updating the title
+
+// ...
+```
+
+As long as the order of the Hook calls is the same between renders, React can associate some local state with each of them. But what happens if we put a Hook call (for example, the `persistForm` effect) inside a condition?
+
+```
+  // 🔴 We're breaking the first rule by using a Hook in a condition
+  if (name !== '') {
+    useEffect(function persistForm() {
+      localStorage.setItem('formData', name);
+    });
+  }
+```
+
+The `name !== ''` condition is `true` on the first render, so we run this Hook. However, on the next render the user might clear the form, making the condition `false` . Now that we skip this Hook during rendering, the order of the Hook calls becomes different:
+
+```
+useState('Mary')           // 1. Read the name state variable (argument is ignored)
+// useEffect(persistForm)  // 🔴 This Hook was skipped!
+useState('Poppins')        // 🔴 2 (but was 3). Fail to read the surname state variable
+useEffect(updateTitle)     // 🔴 3 (but was 4). Fail to replace the effect
+```
+
+**This is why Hooks must be called on the top level of our components.** If we want to run an effect conditionally, we can put that condition *inside* our Hook:
+
+```
+  useEffect(function persistForm() {
+    // 👍 We're not breaking the first rule anymore
+    if (name !== '') {
+      localStorage.setItem('formData', name);
+    }
+  });
+```
+
+### 6. Building Your Own Hooks
+
+**Extracting a Custom Hook**
+
+**A custom Hook is a JavaScript function whose name starts with "use" and that may call other Hooks.** For example, `useFriendStatus` below is our first custom Hook:
+
+```
+import { useState, useEffect } from 'react';
+
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  useEffect(() => {
+    function handleStatusChange(status) {
+      setIsOnline(status.isOnline);
+    }
+
+    ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+    };
+  });
+
+  return isOnline;
+}
+```
+
+**Using a Custom Hook** 
 
