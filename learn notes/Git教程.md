@@ -1,7 +1,5 @@
 # git 入门介绍
 
-![image-20220827125008457](C:\Users\maoqi\AppData\Roaming\Typora\typora-user-images\image-20220827125008457.png)
-
 git以快照的方式对所以文件进行存储，如果当前文件版本与上一个版本没有改变则不存储。
 
 git文件的三种状态：modified,staged, 和committed。
@@ -13,8 +11,6 @@ Staged状态意味你当前版本标记了修改文件可以进入后面的提�
 Committed状态意味数据已经安全存到本地数据库。
 
 下面是三种状态转换的流程图：
-
-![image-20220827132546093](C:\Users\maoqi\AppData\Roaming\Typora\typora-user-images\image-20220827132546093.png)
 
 # Git基础使用
 
@@ -41,8 +37,6 @@ git clone https://github.com/libgit2/libgit2 newname
 每个文件有两种状态：tracked 和 untracked。
 
 你可以暂存这些文件和提交所以暂存的更改，循环往复：
-
-![image-20220827160955630](C:\Users\maoqi\AppData\Roaming\Typora\typora-user-images\image-20220827160955630.png)
 
 查看文件状态：
 

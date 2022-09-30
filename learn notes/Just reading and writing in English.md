@@ -728,8 +728,6 @@ Preview
 
 5 W's ORGANIZER
 
-![image-20220814171341358](C:\Users\maoqi\AppData\Roaming\Typora\typora-user-images\image-20220814171341358.png)
-
 - What is it about? (subject) What is the title?
 - What do I already know about this topic?
 - What kind of text is this? Is it a description? An explanation? An argument? A narrative?

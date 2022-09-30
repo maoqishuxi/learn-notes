@@ -53,7 +53,7 @@ Respects line breaks. Doesn't need newline character "\n"
 
 Template literals only require the backtick character ``, placed at the beginning and end of a string. No need for quote characters.
 
-![image-20220928113622453](.\assets\image-20220928113622453.png)
+![image-20220928113622453](./assets/image-20220928113622453.png)
 
 ## Data types in JavaScript
 
@@ -84,7 +84,7 @@ let x = 0 == '';  // true, type coerced
 let x = 0 === '';  // false, type respected
 ```
 
-![snipaste](.\assets\Snipaste_2022-09-28_12-29-59.png)
+![snipaste](./assets/Snipaste_2022-09-28_12-29-59.png)
 
 ## Additional Mathematical Operations
 
@@ -109,11 +109,11 @@ Adding non-numerical characters can have unintended results
 
 Convert numbers to numerical strings
 
-![image-20220928125208121](.\assets\image-20220928125208121.png)
+![image-20220928125208121](./assets/image-20220928125208121.png)
 
-![image](.\assets\Snipaste_2022-09-28_12-56-12.png)
+![image](./assets/Snipaste_2022-09-28_12-56-12.png)
 
-![image-20220928130051500](.\assets\image-20220928130051500.png)
+![image-20220928130051500](./assets/image-20220928130051500.png)
 
 ## Dates
 
@@ -514,13 +514,13 @@ function computePrice(cost, discount) {
 
 ### 2. Function Syntax: Definition
 
-![image-20220930120415491](.\assets\image-20220930120415491.png)
+![image-20220930120415491](./assets/image-20220930120415491.png)
 
-![image-20220930120829410](.\assets\image-20220930120829410.png)
+![image-20220930120829410](./assets/image-20220930120829410.png)
 
-![image-20220930121005439](.\assets\image-20220930121005439.png)
+![image-20220930121005439](./assets/image-20220930121005439.png)
 
-![image-20220930121327796](.\assets\image-20220930121327796.png)
+![image-20220930121327796](./assets/image-20220930121327796.png)
 
 ## Arrow and anonymous functions
 
@@ -626,7 +626,7 @@ function callback() {
 setTimeout(callback, 3000);  // wait 3 seconds
 ```
 
-![image-20220930172643710](.\assets\image-20220930172643710.png)
+![image-20220930172643710](./assets/image-20220930172643710.png)
 
 ### <span style="color:red">Enter promises</span>
 
