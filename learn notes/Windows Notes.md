@@ -62,3 +62,7 @@ install docker
 curl -sSL https://get.docker.com/ | sh
 ```
 
+`vscode` 插件
+
+![image-20221021200259545](assets/image-20221021200259545.png) 
+
