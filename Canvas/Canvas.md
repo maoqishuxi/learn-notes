@@ -761,3 +761,550 @@ function draw() {
 
 ![image-20221204185157163](./assets/image-20221204185157163.png)
 
+Gradients
+
+Just like any normal drawing program, we can fill and stroke shapes using linear, radial and conic gradients. We create a `CanvasGradient` object by using one of the following methods. We can then assign this object to the `fillStyle` or `strokeStyle` properties.
+
+```
+createLinearGradient(x1, y1, x2, y2)
+// Creates a linear gradient object with a starting point of (x1, y1) and an end point of (x2, y2).
+
+createRadialGradient(x1, y1, r1, x2, y2, r2)
+// Creates a radial gradient. The parameters represent two circle, one with its center at (x1, y1) and a radius of r1, and the other with its center at (x2, y2) with a radius of r2.
+
+createConicGradient(angle, x, y)
+// Creates a conic gradient object with a starting angle of angle in radians, at the position (x, y)
+```
+
+A `createLinearGradient` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	// Create gradients
+	const lingrad = ctx.createLinearGradient(0, 0, 0, 150);
+	lingrad.addColorStop(0, '#00ABEB');
+	lingrad.addColorStop(0.5, '#fff');
+	lingrad.addColorStop(0.5, '#26C000');
+	lingrad.addColorStop(1, '#fff');
+	
+	const lingrad2 = ctx.createLinearGradient(0, 50, 0, 95);
+	lingrad2.addColorStop(0.5, '#000');
+	lingrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+	
+	// assign gradients to fill and stroke styles
+	ctx.fillStyle = lingrad;
+	ctx.strokeStyle = lingrad2;
+	
+	// draw shapes
+	ctx.fillRect(10, 10, 130, 130);
+	ctx.strokeRect(50, 50, 50, 50);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/canvas_lineargradient.png)
+
+A `createRadialGradient` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	// Create gradients
+	const radgrad = ctx.createRadialGradient(45, 45, 10, 52, 50, 30);
+	radgrad.addColorStop(0, '#A7D30C');
+	radgrad.addColorStop(0.9, '#019F62');
+	radgrad.addColorStop(1, 'rgba(1, 159, 98, 0)');
+	
+	const radgrad2 = ctx.createRadialGradient(105, 105, 20, 112, 120, 50);
+	radgrad2.addColorStop(0, '#FF5F98');
+	radgrad2.addColorStop(0.75, '#FF0188');
+	radgrad2.addColorStop(1, 'rgba(255, 1, 136, 0)');
+	
+	const radgrad3 = ctx.createRadialGradient(95, 15, 15, 102, 20, 40);
+	radgrad3.addColorStop(0, '#00C9FF');
+	radgrad3.addColorStop(0.8, '#00B5E2');
+	radgrad3.addColorStop(1, 'rgba(0, 201, 255, 0)');
+	
+	const radgrad4 = ctx.createRadialGradient(0, 150, 50, 0, 140, 90);
+	radgrad4.addColorStop(0, '#F4F201');
+	radgrad4.addColorStop(0.8, '#E4C700');
+	radgrad4.addColorStop(1, 'rgba(228, 199, 0, 0)');
+	
+	// draw shapes
+	ctx.fillStyle = radgrad4;
+	ctx.fillRect(0, 0, 150, 150);
+	ctx.fillStyle = radgrad3;
+	ctx.fillRect(0, 0, 150, 150);
+	ctx.fillStyle = radgrad2;
+	ctx.fillRect(0, 0, 150, 150);
+	ctx.fillStyle = radgrad;
+	ctx.fillRect(0, 0, 150, 150);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/canvas_radialgradient.png)
+
+A `createConicGradient` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	// Create gradients
+	const conicGrad1 = ctx.createConicGradient(2, 62, 75);
+	conicGrad1.addColorStop(0, '#A7D30C');
+	conicGrad1.addColorStop(1, '#fff');
+	
+	const conicGrad2 = ctx.createConicGradient(0, 187, 75);
+	// we multiply our values by Math.PI/180 to convert degrees to radians
+	conicGrad2.addColorStop(0, 'black');
+	conicGrad2.addColorStop(0.25, 'black');
+	conicGrad2.addColorStop(0.25, 'white');
+	conicGrad2.addColorStop(0.5, 'white');
+	conicGrad2.addColorStop(0.5, 'black');
+	conicGrad2.addColorStop(0.75, 'black');
+	conicGrad2.addColorStop(0.75, 'white');
+	conicGrad2.addColorStop(1, 'white');
+	
+	// draw shapes
+	ctx.fillStyle = conicGrad1;
+	ctx.fillRect(12, 25, 100, 100);
+	ctx.fillStyle = conicGrad2;
+	ctx.fillRect(137, 25, 100, 100);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/canvas_conicgrad.png)
+
+### Patterns
+
+```
+createPattern(image, type)
+// Creates and returns a new canvas pattern object. image is a the source of the image (that is, an HTMLImageElement, a SVGImageElement, another HTMLCanvasElement or a OffscreenCanvas, an HTMLVideoElement or a VideoFrame, or an ImageBitmap). type is a string indicating how to use the image
+
+repeat
+// Tiles the image in both vertical and horizontal directions
+
+repeat-x
+// Tiles the image horizontally but not vertically
+
+repeat-y
+// Tiles the image vertically but not horizontally
+
+no-repeat
+// Doesn't tile the image. It's used only once.
+```
+
+A `createPattern` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	// create new image object to use as pattern
+	const img = new Image();
+	img.src = 'canvas_createpattern.png';
+	img.onload = () => {
+		// create pattern
+		const ptrn = ctx.createPattern(img, 'repeat');
+		ctx.fillStyle = ptrn;
+		ctx.fillRect(0, 0, 150, 150);
+	}
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/canvas_createpattern.png)
+
+### Shadows
+
+Using shadows involves just four properties:
+
+```
+shadowOffsetX = float
+// Indicates the horizontal distance the shadow should extend from the object. This value isn't affected by the transformation matrix. The default is 0.
+
+shadowOffsetY = float
+// Indicates the vertical distance the shadow should extend from the object. This value isn't affected by the transformation matrix. The default is 0.
+
+shadowBlur = float
+// Indicates the size of the blurring effect; this value doesn't correspond to a number of pixels and is not affected by the current transformation matrix. The default value is 0.
+
+shadowColor = color
+// A standard CSS color value indicating the color of the shadow effect; by default, it is fully-transparent black.
+```
+
+A shadowed text example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	ctx.shadowOffsetX = 2;
+	ctx.shadowOffsetY = 2;
+	ctx.shadowBlur = 2;
+	ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+	
+	ctx.font = '20px Times New Roman';
+	ctx.fillStyle = 'Black';
+	ctx.fillText('Sample String', 5, 30);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/shadowed-string.png)
+
+### Canvas fill rules
+
+```
+nonzero
+// The non-zero winding rule, which is the default rule.
+
+evenodd
+// The even-odd winding rule
+```
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	ctx.beginPath();
+	ctx.arc(50, 50, 30, 0, Math.PI * 2, true);
+	ctx.arc(50, 50, 15, 0, Math.PI * 2, true);
+	ctx.fill('evenodd');
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors/fill-rule.png)
+
+## 4) Drawing text
+
+Drawing text
+
+```
+fillText(text, x, y [, maxWidth])
+// Fills a given text at the given (x, y) position. Optionally with a maximum width to draw.
+
+strokeText(text, x, y [, maxWidth])
+// Strokes a given text at the given (x, y) position. Optionally with a maximum width to draw.
+```
+
+A `fillText` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	ctx.font = "48px serif";
+	ctx.fillText("Hello world", 10, 50);
+}
+```
+
+![img](data:image/png;base64,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2RzCap2/e4RsOQjn/JBB+Y2pdAYmwqGpJje1vnN9LciTnYqF/sORQc+RMee3zZFlavwMrfUjGkxSbuPYDFhM7MRLao716GuoTw4KZbcfqrJQP4vvCwK5dSL5nX4f4qLWFrXOcx13sMD/Q6YAddHH4vDm6HfIyb9JfVMfC6saxzu5sWxUuDCYq/jv8lEPix0jANyxpsbm8E4w3vfPziGsfS+MB2gEjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKARMWKHUaWGMQGwETFix9WvpjEAoBExYodRpYYxAbARMWLH1a+mMQCgETFih1GlhjEBsBExYsfVr6YxAKAT+AxYL6aGEXaIFAAAAAElFTkSuQmCC)
+
+A `strokeText` example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	ctx.font = "48px serif";
+	ctx.strokeText("Hello world", 10, 50);
+}
+```
+
+## 5)Using images
+
+Until now we have created our own shapes and applied styles to them. One of the more exciting features of `<canvas>` is the ability to use images. These can be used to do dynamic photo compositing or as backdrops of graphs, for sprites in games, and so forth. External images can be used in any format supported by the browser, such as PNG, GIF, or JPEG. You can even use the image produced by other canvas elements on the same page as the source!
+
+Importing images into a canvas is basically a two step process:
+
+1. Get a reference to an `HTMLImageElement` object or to another canvas element as a source. It is also possible to use images by providing a URL.
+2. Draw the image on the canvas using the `drawImage()` function.
+
+### Getting images to draw
+
+The canvas API is able to use any of the following data types as an image source:
+
+```
+HTMLImageElement
+// These are images created using the Image() constructor, as well as any <img> element.
+
+SVGImageElement
+// These are images embedded using the <images> element
+
+HTMLVideoElement
+// Using an HTML <video> element as your image source grabs the current frame from the video and uses it as an image.
+
+HTMLCanvasElement
+// You can use another <canvas> element as your image source.
+
+ImageBitmap
+// A bitmap image, eventually cropped. Such type are used to extract part of an image, a sprite, from a larger image
+
+OffscreenCanvas
+// A special kind of <canvas> that is not displayed and is prepared without being displayed. Using such an image source allows to switch to it without the composition of the content to be visible to the user.
+
+VideoFrame
+// An image representing one single frame of a video.
+```
+
+### Creating an image from scratch
+
+Another option is to create new `HTMLImageElement` objects in our script. To do this, you can use the convenient `Image()` constructor:
+
+```
+const img = new Image(); // Create new img element
+img.src = "myImage.png"; // Set source path
+```
+
+Example: A simple line graph
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	const img = nwe Image();
+	img.onload = () => {
+		ctx.drawImage(img, 0, 0);
+		ctx.beginPath();
+		ctx.moveTo(30, 96);
+		ctx.lineTo(70, 66);
+		ctx.lineTo(103, 76);
+		ctx.lineTo(170, 15);
+		ctx.stroke();
+	};
+	img.src = "backdrop.png";
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Using_images/canvas_backdrop.png)
+
+### Scaling
+
+```
+drawImage(image, x, y, width, height)
+// This adds the width and height parameters, which indicate the size to which to scale the image when drawing it onto the canvas.
+```
+
+Example: Tiling an image
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	const img = new Image();
+	img.onload = () => {
+		for (let i = 0; i < 4; i++) {
+			for (let j = 0; j < 3; j++) {
+				ctx.drawImage(img, j * 50, i * 38, 50, 38);
+			}
+		}
+	};
+	img.src = "rhino.jpg";
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Using_images/canvas_scale_image.png)
+
+### Slicing
+
+```
+drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+// Given an image, this function takes the area of the source image specified by the rectangle whose top-left corner is (sx, sy) and whose width and height are sWidth and sHeight and draws it into the canvas, placing it on the canvas at (dx, dy) and scaling it to the size specified by dWidth and dHeight.
+```
+
+![The rectangular source image top left coordinates are sx and sy with a width and height of sWidth and sHeight respectively. The source image is translated to the destination canvas where the top-left corner coordinates are dx and dy, maintaining its aspect ratio, with a width and height of dWidth and dHeight respectively.](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Using_images/canvas_drawimage.jpg)
+
+Example: Framing an image
+
+```
+<html lang="en">
+  <body onload="draw();">
+    <canvas id="canvas" width="150" height="150"></canvas>
+    <div style="display:none;">
+      <img id="source" src="rhino.jpg" width="300" height="227" />
+      <img id="frame" src="canvas_picture_frame.png" width="132" height="150" />
+    </div>
+  </body>
+</html>
+```
+
+```
+function draw() {
+	const canvas = document.getElementById('canvas');
+	const ctx = canvas.getContext('2d');
+	
+	// Draw slice
+	ctx.drawImage(
+		document.getElementById('source'),
+		33,
+		71,
+		104,
+		124,
+		21,
+		20,
+		87,
+		104
+	);
+	
+	// Draw frame
+	ctx.drawImage(document.getElementById('frame'), 0, 0);
+}
+```
+
+## 6)Transformations
+
+A save and restore canvas state example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	ctx.fillRect(0, 0, 150, 150); // Draw a rectangle with default settings
+	ctx.save(); // Save the default state
+	
+	ctx.fillStyle = '#09F'; // Make changes to the settings
+	ctx.fillRect(15, 15, 120, 120); // Draw a rectangle with new settings
+	
+	ctx.save(); // Save the current state
+	ctx.fillStyle = '#FFF'; // Make changes to the settings
+	ctx.globalAlpha = 0.5;
+	ctx.fillRect(30, 30, 90, 90); // Draw a rectangle with new settings
+	
+	ctx.restore(); // Restore previous state
+	ctx.fillRect(45, 45, 60, 60); // Draw a rectangle with restored settings
+	
+	ctx.restore(); // Restore original state
+	ctx.fillRect(60, 60, 30, 30); // Draw a rectangle with restored settings
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/canvas_savestate.png)
+
+### Translating
+
+```
+translate(x, y)
+// Moves the canvas and its origin on the grid. x indicates the horizontal distance to move, and y indicates how far to move the grid vertically
+```
+
+![The canvas is pushed down and to the right, or translated, from its origin point on the grid by 'x' units horizontally and 'y' units vertically.](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/canvas_grid_translate.png)
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	for (let i = 0; i < 3; i++) {
+		for (let j = 0; j < 3; j++) {
+			ctx.save();
+			ctx.fillStyle = `rgb(${51 * i}, ${255 - 51 * i}, 255)`;
+			ctx.translate(10 + j * 50, 10 + i * 50);
+			ctx.fillRect(0, 0, 25, 25);
+			ctx.restore();
+		}
+	}
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/translate.png)
+
+### Rotating
+
+The second transformation method is `ratate()`. We use it to rotate the canvas around the current origin.
+
+```
+rotate(angle).
+// Rotates the canvas clockwise around the current origin by the angle number of radians.
+```
+
+![The default origin point is at the top left, 0 degrees is horizontal and to the right. The rotation point starts from the origin point and goes clockwise.](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/canvas_grid_rotate.png)
+
+A rotate example
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	// left rectangles, rotate from canvas origin
+	ctx.save()
+	// blue rect
+	ctx.fillStyle = "#0095DD";
+	ctx.fillRect(30, 30, 100, 100);
+	ctx.rotate((Math.PI / 180) * 25);
+	// grey rect
+	ctx.fillRect(30, 30, 100, 100);
+	ctx.restore();
+	
+	// right rectangles, rotate from rectangle center
+	// draw blue rect
+	ctx.fillStyle = "#0095DD";
+	ctx.fillRect(30, 30, 100, 100);
+	ctx.rotate((Math.PI / 180) * 25);
+	// grey rect
+	ctx.fillStyle = "#4D4E53";
+	ctx.fillRect(30, 30, 100, 100);
+	ctx.restore();
+	
+	// right rectangles, rotate from rectangle center
+	// draw blue rect
+	ctx.fillStyle = "#0095DD";
+	ctx.fillRect(150, 30, 100, 100);
+	
+	ctx.translate(200, 80); // translate to rectangle center
+	// x = x + 0.5 * width
+	// y = y + 0.5 * height
+	ctx.rotate((Math.PI / 180) * 25); // rotate
+	ctx.translate(-200, -80); // translate back
+	
+	// draw grey rect
+	ctx.fillStyle = "#4D4E53";
+	ctx.fillRect(150, 30, 100, 100);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/rotate.png)
+
+Example for `transform` and `setTransform`
+
+```
+function draw() {
+	const ctx = document.getElementById('canvas').getContext('2d');
+	
+	const sin = Math.sin(Math.PI / 6);
+	const cos = Math.cos(Math.PI / 6);
+	ctx.translate(100, 100);
+	let c = 0;
+	for (let i = 0; i <= 12; i++) {
+		c = Math.floor((255 / 12) * i);
+		ctx.fillStyle = `rgb($(c), ${c}, ${c})`;
+		ctx.fillRect(0, 0, 100, 10);
+		ctx.transform(cos, sin, -sin, cos, 0, 0);
+	}
+	
+	ctx.setTransform(-1, 0, 0, 1, 100, 100);
+	ctx.fillStyle = "rgba(255, 128, 255, 0.5)";
+	ctx.fillRect(0, 50, 100, 100);
+}
+```
+
+![img](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations/canvas_transform.png)
+
+## 7)Compositing and clipping
+
+`globalCompositeOperation`
+
+We can not only draw new shapes behind existing shapes but we can also use it to mask off certain areas, clear sections from the canvas (not limited to rectangles like the `clearRect()`. method does) and more.
+
+```
+globalCompositeOperation = type
+// This sets the type of compositing operation to apply when drawing new shapes, where type is a string identifying which of the twelve compositing operations to use.
+```
+
+## 8)Basic animations
+
+These are the steps you need to take to draw a frame:
+
+1. **Clear the canvas** Unless the shapes you will be drawing fill the complete canvas (for instance a backdrop image), you need to clear any shapes that have been drawn previously. The easiest way to do this is using the `clearRect()`. method.
+2. **Save the canvas state** If you’re changing any setting (such as styles, transformations, etc.) which affect the canvas state and you want to make sure the original state is used each time a frame is drawn, you need to save that original state.
+3. **Draw animated shapes** The step where you do the actual frame rendering.
+4. **Restore the canvas state** If you’ve saved the state, restore it before drawing a new frame.
+
+### Controlling an animation
+
+
+
