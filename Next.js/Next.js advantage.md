@@ -264,3 +264,286 @@ However, this means you have to manually handle:
 - Only loading images when they enter the viewport
 
 **Image Component and Image Optimization**
+
+`next/image` is an extension of the HTML `<img>` element, evolved for the modern web.
+
+Next.js also has support for Image Optimization by default. This allows for resizing, optimizing, and serving images in modern formats like <span style="color: #0074de;">WebP</span> 
+
+when the browser supports it. This avoids shipping large images to devices with a smaller viewport. It also allows Next.js to automatically adopt future image formats and serve them to browsers that support those formats.
+
+Automatic Image Optimization works with any image source. Even if the image is hosted by an external data source, like a CMS, it can still be optimized.
+
+**Using the Image Component**
+
+Instead of optimizing images at build time, Next.js optimizes images on-demand, as users request them. Unlike static site generators and static-only solutions, your build times aren't increased, whether shipping 10 images or 10 million images.
+
+Images are always rendered in such a way as to avoid <span style="color: #0074de;">Cumulative Layout Shift</span>, a <span style="color: #0074de;">Core Web Vital</span> that Google is going to <span style="color: #0074de;">use in search ranking</span>.
+
+```
+import Image from 'next/image';
+
+const YourComponent = () => (
+  <Image
+  	src="/images/profile.jpg" // Route of the image file
+    height={144} // Desired size with correct aspect ratio
+    width={144} // Desired size with correct aspect ratio
+    alt="Your Name"
+  />
+);
+```
+
+**Metadata**
+
+```
+<Head>
+  <title>Create Next App</title>
+  <link rel="icon" href="/favicon.ico" />
+</Head>
+```
+
+**Adding `Head` to `first-post.js`**
+
+We haven't added a `<title>` to our `/posts/first-post` route. Let's add one.
+
+Open the `pages/posts/first-post.js` file and add an import for `Head` from `next/head` at the beginning of the file:
+
+```
+import Head from 'next/head';
+```
+
+Then, update the exported `FirstPost` component to include the `Head` component.
+
+```
+export default function FirstPost() {
+  return (
+    <>
+      <Head>
+        <title>First Post</title>
+      </Head>
+      <h1>First Post</h1>
+      <h2>
+        <Link href="/">← Back to home</Link>
+      </h2>
+    </>
+  );
+}
+```
+
+**Third-Party JavaScript**
+
+**Third-party JavaScript** refers to any scripts that are added from a third-party source. Usually, third-party scripts are included in order to introduce newer functionality into a site that does not need to be written from scratch, such as analytics, ads, and customer support widgets.
+
+**Adding Third-Party JavaScript**
+
+Let's dive into how we can add a third-party script to a Next.js page.
+
+Open `pages/posts/first-post.js` in your editor and find the following lines:
+
+```
+<Head>
+  <title>First Post</title>
+</Head>
+```
+
+In addition to metadata, scripts that need to load and execute as soon as possible are usually added within the `<head>` of a page. Using a regular HTML `<script>` element, an external script would be added as follows:
+
+```
+<Head>
+  <title>First Post</title>
+  <script src="https://connect.facebook.net/en_US/sdk.js" />
+</Head>
+```
+
+**Using the Script Component**
+
+`next/script` is an extension of the HTML `<script>` element and optimizes when additional scripts are fetched and executed.
+
+In the same file, add an import for `Script` from `next/script` at the beginning of the file:
+
+```
+import Script from 'next/script';
+```
+
+Now, update the `FirstPost` component to include the `Script` component:
+
+```
+export default function FirstPost() {
+  return (
+    <>
+      <Head>
+        <title>First Post</title>
+      </Head>
+      <Script
+        src="https://connect.facebook.net/en_US/sdk.js"
+        strategy="lazyOnload"
+        onLoad={() =>
+          console.log(`script loaded correctly, window.FB has been populated`)
+        }
+      />
+      <h1>First Post</h1>
+      <h2>
+        <Link href="/">← Back to home</Link>
+      </h2>
+    </>
+  );
+}
+```
+
+Notice that a few additional properties have been defined in the Script component:
+
+- `strategy` controls when the third-party script should load. A value of `lazyOnload` tells Next.js to load this particular script lazily during browser idle time
+- `onLoad` is used to run any JavaScript code immediately after the script has finished loading. 
+
+**CSS Styling**
+
+**Layout Component**
+
+First, let's create a **Layout** component which will be shared across all pages.
+
+- Create a top-level directory called `components`.
+- Inside `components`, create a file called `layout.js` with the following content:
+
+```
+export default function Layout({ children }) {
+  return <div>{children}</div>
+}
+```
+
+Then, open `pages/posts/first-post.js`, add an import for the `Layout` component, and make it the outermost component:
+
+```
+import Head from 'next/head';
+import Link from 'next/link';
+import Layout from '../../components/layout';
+
+export default function FirstPost() {
+  return (
+  	<Layout>
+  	  <Head>
+  	  	<title>First Post</title>
+  	  </Head>
+  	  <h1>First Post</h1>
+  	  <h2>
+  	  	<Link href="/"><- Back to home</Link>
+  	  </h2>
+  	</Layout>
+  );
+}
+```
+
+**Adding CSS**
+
+Now, let's add some styles to the `Layout` component. To do so, we'll use <span style="color: #0074de;">CSS Modules</span>, which lets you import CSS files in a React component.
+
+Create a file called `components/layout.modules.css` with the following content:
+
+```
+.container {
+  max-width: 36rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+```
+
+> **Important**: To use <span style="color: #0074de;">CSS Modules</span>, the CSS file name must end with `.module.css`.
+
+To use this `container` class inside `components/layout.js`, you need to:
+
+- Import the CSS file and assign a name to it, like `styles`
+- Use `styles.container` as the `className`
+
+Open `components/layout.js` and replace its content with the following:
+
+```
+import styles from './layout.modules.css';
+
+export default function Layout({ children }) {
+  return <div className={styles.container}>{children}</div>
+}
+```
+
+**Automatically Generates Unique Class Names**
+
+![img](./assets/devtools.png)
+
+This is what <span style="color: #0074de;">CSS Modules</span> does: *It automatically generates unique class names*. As long as you use CSS Modules, you don't have to worry about class name collisions.
+
+Furthermore, Next.js is code splitting feature works on <span style="color: #0074de;">CSS Modules</span> as well. It ensures the minimal amount of CSS is loaded for each page. This results in smaller bundle sizes.
+
+<span style="color: #0074de;">CSS Modules</span> are extracted from the JavaScript bundles at build time and generate `.css` files that are loaded automatically by Next.js.
+
+**Global Styles**
+
+<span style="color: #0074de;">CSS Modules</span> are useful for component-level styles. But if you want some CSS to be loaded by **every page**, Next.js has support for that as well.
+
+To load <span style="color: #0074de;">global CSS</span> to your application, create a file called `pages/_app.js` with the following content:
+
+```
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+
+The default export of `_app.js` is a top-level React component that wraps all the pages in your application. You can use this component to keep state when navigating between pages, or to add global styles as we're doing here. <span style="color: #0074de;">Learn more about `_app.js` file.</span>
+
+ **Restart the Development Server**
+
+**Important:** You need to restart the development server when you add <span style="color: #0074de;">`pages/_app.js`</span>. Press `Ctrl + c` to stop the server and run:
+
+```
+npm run dev
+```
+
+ **Adding Global CSS**
+
+In Next.js, you can add <span style="color: #0074de;">global CSS</span> files by importing them from <span style="color: #0074de;">pages/_app.js</span>. You **cannot** import global CSS anywhere else.
+
+The reason that <span style="color: #0074de;">global CSS</span> can't be imported outside of `pages/_app.js` is that global CSS affects all elements on the page.
+
+You can place the global CSS file anywhere and use any name. So let's do the following:
+
+- Create a top-level `styles` directory and a `global.css` file.
+- Add the following CSS inside `styles/global.css`. This code resets some styles and changes the color of the `a` tag:
+
+```
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+```
+
+Finally, import the CSS file inside the `pages/_app.js` file you've created earlier on:
+
+```
+// `pages/_app.js`
+import '../styles/global.css';
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+
+**Polishing Layout**
