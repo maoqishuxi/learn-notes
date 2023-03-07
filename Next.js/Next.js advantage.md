@@ -547,3 +547,67 @@ export default function App({ Component, pageProps }) {
 ```
 
 **Polishing Layout**
+
+**Styling Tips**
+
+**Pre-rendering and Data Fetching**
+
+**Pre-rendering**
+
+![img](./assets/no-pre-rendering.png)
+
+**Two Forms of Pre-rendering**
+
+Next.js has two forms of pre-rendering: <span style="color: #0074de;">Static Generation</span> and <span style="color: #0074de;">Server-side Reandering</span>. The difference is in **when** it generates the HTML for a page.
+
+- <span style="color: #0074de;">Static Generation</span> is the pre-rendering method that generates the HTML at **build time**. The pre-rendered HTML is then reused on each request.
+- <span style="color: #0074de;">Server-side Rendering</span> is the pre-rendering method that generates the HTML on **each request**.
+
+![img](./assets/static-generation.png)
+
+![img](./assets/server-side-rendering.png)
+
+> In development mode (when you run `npm run dev` or `yarn dev`), pages are <span style="color: #0074de;">pre-rendered</span> on every request. This also applies to <span style="color: #0074de;">Static Generation</span> to make it easier to develop. When going to production, Static Generation will happen once, at build time, and **not** on every request.
+
+**Per-page Basis**
+
+Importantly, Next.js lets you **choose** which pre-rendering form to use for each page. You can create a "hybrid" Next.js app by using <span style="color: #0074de;">Static Generation</span> for most pages and using <span style="color: #0074de;">Server-side Rendering</span> for other.
+
+![img](./assets/per-page-basis.png)
+
+**When to Use <span style="color: #0074de;">Static Generation</span>v.s. <span style="color: #0074de;">Server-side Rendering</span>**
+
+We recommend using <span style="color: #0074de;">Static Generation</span> (with and without data) whenever possible because your page can be built once and served by CDN, which makes it much faster than having a server render the page on every request.
+
+**Static Generation with and without Data**
+
+<span style="color: #0074de;">Static Generation</span> can be done with and without data.
+
+![img](./assets/static-generation-without-data.png)
+
+However, for some pages, you might not be able to render the HTML without first fetching some external data. Maybe you need to access the file system, fetch external API, or query your database at build time. Next.js supports this case -- <span style="color: #0074de;">Static Generation **with data**</span> -- out of the box.
+
+![img](./assets/static-generation-with-data.png)
+
+**Static Generation with Data using `getStaticProps`**
+
+How does it work? Well, in Next.js, when you export a page component, you can also export an `async` function called `getStaticProps`. If you do this, then:
+
+- <span style="color: #0074de;">`getStaticProps`</span> runs at build time in production, and ...
+- Inside the function, you can fetch external data and send it as props to the page.
+
+```
+export default function Home(props) {...}
+
+export async function getStaticProps() {
+	// Get external data from the file system, API, DB, etc.
+	const data = ...
+	
+	// The value of the `props` key will be 
+	// passed to the `Home` component
+	return {
+		props: ...
+	}
+}
+```
+
